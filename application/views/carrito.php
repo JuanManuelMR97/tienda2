@@ -73,7 +73,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <section id="do_action">
                 <div class="container">
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-7">
                             <div class="total_area">
                                 <ul>
                                     <li>Subtotal <span><?= $this->cart->total(); ?> €</span></li>
@@ -83,6 +83,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </ul>
                                 <input type="submit" class="btn btn-default update updatecart" value="Actualizar cesta">
                                 <a class="btn btn-default update" href="<?= site_url('Carrito/eliminar_carrito'); ?>">Vaciar cesta</a>
+                                <a class="btn btn-default warning update" href="<?= site_url('Carrito/cargar_resumen'); ?>">Resumen pedido</a>
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,73 @@
+<header id="header">
+    <div class="header-middle"><!--header-middle-->
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="logo pull-left">
+                        <a href="<?= site_url('Productos'); ?>"><img src="<?= base_url(); ?>assets/img/home/logo.png" alt="" /></a>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="shop-menu pull-right">
+                        <ul class="nav navbar-nav">
+                            <?php if (!$this->session->userdata('login')): ?>
+                                <li><a href="<?= site_url('Carrito'); ?>"><i class="fa fa-shopping-cart"></i> Cesta</a></li>
+                                <li><a href="<?= site_url('Login'); ?>"><i class="fa fa-sign-in"></i> Iniciar sesión</a></li>
+                            <?php else: ?>
+                                <li><a href="<?= site_url('Login/carga_perfil/' . $this->session->userdata('id_usuario')); ?>"><i class="fa fa-user"></i> <?= $this->session->userdata('nombre_usuario'); ?></a></li>
+                                <li><a href="<?= site_url('Carrito'); ?>"><i class="fa fa-shopping-cart"></i> Cesta</a></li>
+                                <li><a href="<?= site_url('Login/logout'); ?>"><i class="fa fa-sign-out"></i> Cerrar sesión</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!--/header-middle-->
+
+    <div class="header-bottom"><!--header-bottom-->
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="mainmenu pull-left">
+                        <ul class="nav navbar-nav collapse navbar-collapse">
+                            <li><a href="<?= site_url('Productos'); ?>">Inicio</a></li>
+                            <?php if ($this->session->userdata('admin') && $this->session->userdata('login')) { ?>
+                                <li><a href="<?= site_url('Carrito/usuarios_pedido/' . $this->session->userdata('id_usuario')); ?>">Mis pedidos</a></li>
+                                <li class="dropdown"><a href="#">Operaciones<i class="fa fa-angle-down"></i></a>
+                                    <ul role="menu" class="sub-menu">
+                                        <li><a href="<?= site_url('Crud/muestra_productos'); ?>"><i class="fa fa-table"></i> Productos</a></li>
+                                        <li><a href="<?= site_url('Crud/muestra_categorias'); ?>"><i class="fa fa-table"></i> Categorías</a></li>
+                                        <li><a href="<?= site_url('Crud/muestra_pedidos'); ?>"><i class="fa fa-table"></i> Pedidos</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown"><a href="#">Exportar<i class="fa fa-angle-down"></i></a>
+                                    <ul role="menu" class="sub-menu">
+                                        <li><a href="<?= site_url('Productos/exportar_xml_productos'); ?>"><i class="fa fa-code"></i> Productos</a></li>
+                                        <li><a href="<?= site_url('Productos/exportar_xml_categorias'); ?>"><i class="fa fa-code"></i> Categorías</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown"><a href="#">Importar<i class="fa fa-angle-down"></i></a>
+                                    <ul role="menu" class="sub-menu">
+                                        <li><a href="<?= site_url('Productos/cargar_formulario_prod'); ?>"><i class="fa fa-code"></i> Productos</a></li>
+                                        <li><a href="<?= site_url('Productos/cargar_formulario_cat'); ?>"><i class="fa fa-code"></i> Categorías</a></li>
+                                    </ul>
+                                </li>
+                            <?php } else if ($this->session->userdata('login')) { ?>
+                                <li><a href="<?= site_url('Carrito/usuarios_pedido/' . $this->session->userdata('id_usuario')); ?>">Mis pedidos</a></li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!--/header-bottom-->
+</header><!--/header-->

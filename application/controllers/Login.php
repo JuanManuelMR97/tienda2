@@ -7,7 +7,7 @@ class Login extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->helper('form');
-        $this->load->library('form_validation');
+        $this->load->library(array('form_validation', 'cart'));
         $this->load->model('Login_model');
     }
 
@@ -38,11 +38,21 @@ class Login extends CI_Controller {
                 $datos = array(
                     'login' => TRUE,
                     'id_usuario' => $conectado->id_usuario,
-                    'nombre_usuario' => $conectado->nombre_usuario
+                    'dni' => $conectado->dni,
+                    'nombre' => $conectado->nombre,
+                    'apellidos' => $conectado->apellidos,
+                    'direccion' => $conectado->direccion,
+                    'cp' => $conectado->codigo_postal,
+                    'provincia' => $conectado->provincia,
+                    'email' => $conectado->email,
+                    'nombre_usuario' => $conectado->nombre_usuario,
+                    'admin' => $conectado->admin
                 );
                 //Agregamos los datos del usuario logueado a la sesión
                 $this->session->set_userdata($datos);
                 $this->index();
+            } else {
+                redirect('Login');
             }
         }
     }
@@ -51,8 +61,11 @@ class Login extends CI_Controller {
      * Elimina la sesión
      */
     public function logout() {
-        $this->session->sess_destroy();
-        $this->index();
+        $datos = array(
+            'login' => FALSE
+        );
+        $this->session->set_userdata($datos);
+        redirect('Productos');
     }
 
     /**
@@ -69,15 +82,18 @@ class Login extends CI_Controller {
     public function sendMailGmail() {
         $this->form_validation->set_rules('correo', 'Correo electrónico', 'required|valid_email');
 
-        if ($this->form_validation->run() == FALSE) {
+        if ($this->form_validation->run() == FALSE || !$this->Login_model->existe_email($this->input->post('correo'))) {
             $this->carga_ayuda();
         } else {
             $this->email->from('segundodaw2019@gmail.com');
             $this->email->to($this->input->post('correo'));
             $this->email->subject('Confirma que eres tú para acceder a tu cuenta de R-Shop');
-            $this->email->message('<p>Selecciona "confirmar" para verificar tu identidad y acceder a tu cuenta.</p>'
-                    . '<a href="' . site_url('Login/carga_restablecer/' . $this->Login_model->existe_email($this->input->post('correo'))) . '">Confirmar</a>');
+            $this->email->message('<p>Hola, ' . $this->Login_model->existe_email($this->input->post('correo'))->nombre . ':</p>'
+                    . '<p>Parece que estás teniendo problemas para entrar en tu cuenta.'
+                    . '<p>Selecciona "confirmar" para verificar tu identidad y acceder a tu cuenta.</p>'
+                    . '<a href="' . site_url('Login/carga_restablecer/' . $this->Login_model->existe_email($this->input->post('correo'))->id_usuario) . '">Confirmar</a>');
             $this->email->send();
+            redirect('Login');
         }
     }
 
@@ -89,8 +105,64 @@ class Login extends CI_Controller {
         $this->load->view('restablecer_contraseña', ['id' => $id]);
     }
 
+    /**
+     * Llama a una función del modelo, la cual se encarga de restablecer la 
+     * contraseña
+     * @param int $id
+     */
     public function restore_pass($id) {
-        $this->Login_model->cambia_contraseña($id, $this->input->post('newpass'));
+        $this->form_validation->set_rules('newpass', 'Nueva contraseña', 'required');
+        $this->form_validation->set_rules('newpass1', 'Confirma nueva contraseña', 'required');
+
+        if ($this->form_validation->run() == FALSE || $this->input->post('newpass') !== $this->input->post('newpass1')) {
+            $this->carga_restablecer($id);
+        } else {
+            $this->Login_model->cambia_contraseña($id, $this->input->post('newpass'));
+            redirect('Login');
+        }
+    }
+
+    /**
+     * Carga la vista que muestra el formulario con los datos correspondientes 
+     * al usuario que está logueado en ese instante
+     * @param int $id
+     */
+    public function carga_perfil($id) {
+        $this->load->view('perfil_usuario', ['id' => $id]);
+    }
+
+    /**
+     * Llama a una función del modelo, la cual se encarga de actualizar los 
+     * datos del usuario en cuestión
+     * @param int $id
+     */
+    public function actualiza_perfil($id) {
+        $this->form_validation->set_rules('username', 'Nombre', 'required');
+        $this->form_validation->set_rules('surnames', 'Apellidos', 'required');
+        $this->form_validation->set_rules('userdni', 'DNI', 'required|valid_dni');
+        $this->form_validation->set_rules('address', 'Dirección', 'required');
+        $this->form_validation->set_rules('postalcode', 'Código postal', 'required');
+        $this->form_validation->set_rules('provinces', 'Provincia', 'required');
+        $this->form_validation->set_rules('useremail', 'Correo electrónico', 'required|valid_email');
+        $this->form_validation->set_rules('user_name', 'Nombre de usuario', 'required');
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->load->view('perfil_usuario');
+        } else {
+            $this->Login_model->modifica_datos($id);
+            redirect('Productos');
+        }
+    }
+
+    /**
+     * Llama a una función del modelo, la cual se encarga de eliminar la cuenta 
+     * del usuario en cuestión
+     * @param int $id
+     */
+    public function elimina_cuenta($id) {
+        $this->session->sess_destroy();
+        $this->Login_model->borra_usuario($id);
+        redirect('Login');
     }
 
 }

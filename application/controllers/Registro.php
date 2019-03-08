@@ -14,7 +14,7 @@ class Registro extends CI_Controller {
     public function index() {
         $this->form_validation->set_rules('nombre', 'Nombre', 'required');
         $this->form_validation->set_rules('apellidos', 'Apellidos', 'required');
-        $this->form_validation->set_rules('dni', 'DNI', 'required|valid_dni');
+        $this->form_validation->set_rules('dni', 'DNI', 'required|valid_dni|is_unique[usuario.dni]');
         $this->form_validation->set_rules('direccion', 'Dirección', 'required');
         $this->form_validation->set_rules('cp', 'Código postal', 'required');
         $this->form_validation->set_rules('provincias', 'Provincia', 'required');
@@ -25,7 +25,21 @@ class Registro extends CI_Controller {
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('login');
         } else {
-            $this->Registro_model->insertar_usuario();
+            $this->Registro_model->inserta_usuario();
+            $registrado = array(
+                'login' => TRUE,
+                'id_usuario' => get_userId($this->input->post('nombre_usuario')),
+                'dni' => $this->input->post('dni'),
+                'nombre' => $this->input->post('nombre'),
+                'apellidos' => $this->input->post('apellidos'),
+                'direccion' => $this->input->post('direccion'),
+                'cp' => $this->input->post('cp'),
+                'provincia' => $this->input->post('provincias'),
+                'email' => $this->input->post('email'),
+                'nombre_usuario' => $this->input->post('nombre_usuario'),
+                'admin' => FALSE
+            );
+            $this->session->set_userdata($registrado);
             redirect('Productos');
         }
     }

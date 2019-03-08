@@ -7,10 +7,9 @@ class Registro_model extends CI_Model {
     }
 
     /**
-     * Inserta la fila con los datos del nuevo usuario en la base de datos y 
-     * crea la sesión con esos datos
+     * Inserta la fila con los datos del nuevo usuario en la base de datos
      */
-    public function insertar_usuario() {
+    public function inserta_usuario() {
         $datos = array(
             'dni' => $this->input->post('dni'),
             'nombre' => $this->input->post('nombre'),
@@ -20,16 +19,10 @@ class Registro_model extends CI_Model {
             'provincia' => $this->input->post('provincias'),
             'email' => $this->input->post('email'),
             'nombre_usuario' => $this->input->post('nombre_usuario'),
-            'contraseña' => sha1($this->input->post('contraseña'))
+            'contraseña' => sha1($this->input->post('contraseña')),
+            'admin' => FALSE
         );
         $this->db->insert('usuario', $datos);
-
-        $registrado = array(
-            'login' => TRUE,
-            'id_usuario' => $this->id_usuario,
-            'nombre_usuario' => $this->input->post('nombre_usuario')
-        );
-        $this->session->set_userdata($registrado);
     }
 
 }

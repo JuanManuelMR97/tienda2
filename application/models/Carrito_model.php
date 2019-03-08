@@ -20,4 +20,70 @@ class Carrito_model extends CI_Model {
         return $producto;
     }
 
+    public function inserta_pedido() {
+        $datos = array(
+            'usuario_id' => $this->session->userdata('id_usuario'),
+            'dni' => $this->session->userdata('dni'),
+            'nombre' => $this->session->userdata('nombre'),
+            'apellidos' => $this->session->userdata('apellidos'),
+            'direccion' => $this->session->userdata('direccion'),
+            'codigo_postal' => $this->session->userdata('cp'),
+            'provincia' => $this->session->userdata('provincia'),
+            'email' => $this->session->userdata('email'),
+            'fecha' => date('Y-m-d'),
+            'estado' => 'PR'
+        );
+
+        if (!$this->session->userdata('login')) {
+            redirect('Login');
+        } else {
+            $this->db->insert('pedido', $datos);
+            $this->inserta_lineas_pedido();
+        }
+    }
+
+    public function inserta_lineas_pedido() {
+        $this->db->select('numero_pedido');
+        $this->db->where('numero_pedido = (SELECT MAX(numero_pedido) FROM pedido)');
+        $query = $this->db->get('pedido');
+        $pedido = $query->row();
+
+        foreach ($this->cart->contents() as $items) {
+            $datos = array(
+                'cantidad' => $items['qty'],
+                'precio' => $items['subtotal'],
+                'producto_id' => $items['id'],
+                'pedido_numero' => $pedido->numero_pedido
+            );
+            $this->db->insert('linea_pedido', $datos);
+        }
+    }
+
+    public function get_pedido() {
+        $this->db->select('numero_pedido');
+        $this->db->where('numero_pedido = (SELECT MAX(numero_pedido) FROM pedido)');
+        $query = $this->db->get('pedido');
+        $pedido = $query->row();
+        return $pedido->numero_pedido;
+    }
+
+    public function get_lineas_pedido($id_pedido) {
+        $this->db->where('pedido_numero', $id_pedido);
+        $query = $this->db->get('linea_pedido');
+        $lineas = $query->result();
+        return $lineas;
+    }
+
+    public function get_pedidos_usuario() {
+        $this->db->where('usuario_id', $this->session->userdata('id_usuario'));
+        $query = $this->db->get('pedido');
+        return $query->result();
+    }
+
+    public function actualizar_estado($numeropedido) {
+        $this->db->set('estado', 'C');
+        $this->db->where('numero_pedido', $numeropedido);
+        $this->db->update('pedido');
+    }
+
 }

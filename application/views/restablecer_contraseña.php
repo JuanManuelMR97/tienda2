@@ -32,8 +32,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <div class="login-form"><!--login form-->
                             <h2>Restablece tu contraseña</h2>
                             <?= form_open(site_url('Login/restore_pass/' . $id)); ?>
-                                <input type="text" name="newpass" placeholder="Nueva contraseña" value="<?= set_value('newpass'); ?>" />
+                                <input type="password" name="newpass" placeholder="Nueva contraseña" value="<?= set_value('newpass'); ?>" />
                                 <?= form_error('newpass'); ?>
+                                <input type="password" name="newpass1" placeholder="Confirma nueva contraseña" value="<?= set_value('newpass1'); ?>" />
+                                <?= form_error('newpass1'); ?>
                                 <button type="submit" class="btn btn-default">Enviar</button>
                             <?= form_close(); ?>
                         </div><!--/login form-->

@@ -41,6 +41,7 @@ function dbresult_to_array_null($rs, $clave, $valor, $default = '') {
 function get_categorias() {
     $ci = get_instance();
     $ci->db->select('id_categoria, nombre');
+    $ci->db->where('visible', TRUE);
     $query = $ci->db->get('categoria');
     return $query->result();
 }
@@ -54,4 +55,27 @@ function get_provincias() {
     $ci->db->select('cod, nombre');
     $query = $ci->db->get('provincias');
     return $query->result();
+}
+
+/**
+ * Devuelve el id correspondiente al nombre del usuario pasado como parámetro
+ * @param string $username
+ * @return int
+ */
+function get_userId($username) {
+    $ci = get_instance();
+    $ci->db->select('id_usuario');
+    $ci->db->where('nombre_usuario', $username);
+    $query = $ci->db->get('usuario');
+    $result = $query->row();
+    return $result->id_usuario;
+}
+
+function SQLToProvincia($cod) {
+    $ci = get_instance();
+    $ci->db->select('nombre');
+    $ci->db->where('cod', $cod);
+    $query = $ci->db->get('provincias');
+    $result = $query->row();
+    return $result->nombre;
 }

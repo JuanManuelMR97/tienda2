@@ -1448,7 +1448,7 @@ h2.title {
 }
 
 
-.login-form form input, .signup-form form input, .signup-form form select {
+.login-form form input, .login-form form select, .signup-form form input, .signup-form form select {
   background: #F0F0E9;
   border: medium none;
   color: #696763;
@@ -1773,6 +1773,40 @@ h2.title {
 
 .update, .check_out {
   background: red;
+  border-radius: 0;
+  color: #FFFFFF;
+  margin-top: 18px;
+  border: none;
+  padding: 5px 15px;
+}
+
+.botones, #boton {
+    padding: 6px 25px;
+    margin-top: 23px;
+    width: 100%;
+    margin-left: 0px;
+}
+
+.success {
+  background: #5cb85c;
+  border-radius: 0;
+  color: #FFFFFF;
+  margin-top: 18px;
+  border: none;
+  padding: 5px 15px;
+}
+
+.warning {
+  background: #ffc107;
+  border-radius: 0;
+  color: #FFFFFF;
+  margin-top: 18px;
+  border: none;
+  padding: 5px 15px;
+}
+
+.info {
+  background: grey;
   border-radius: 0;
   color: #FFFFFF;
   margin-top: 18px;
